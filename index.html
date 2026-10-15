@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Captura de Datos</title>
+</head>
+<body>
+
+  <h2>Captura de Datos</h2>
+
+  <form id="formulario" action="https://script.google.com/macros/s/AKfycbz05LF7O6xy01wa1kqSEkRKm04WzssZQAEqbctuQvuvM5KdVDVChEo1EwwKjKCKL7n4/exec" method="POST" target="hidden_iframe" onsubmit="enviado()">
+    <label for="nombre">Nombre:</label><br>
+    <input type="text" id="nombre" name="nombre" required><br><br>
+
+    <label for="edad">Edad:</label><br>
+    <input type="number" id="edad" name="edad" required min="0" max="9999999999999999999999999999999999"><br><br>
+
+    <label for="institucion">Institucion:</label><br>
+    <input type="text" id="institucion" name="institucion" required><br><br>
+
+    <label for="ciudad">Ciudad:</label><br>
+    <input type="text" id="ciudad" name="ciudad" required min="1" max="120"><br><br>
+    
+    <label for="municipio">Municipio:</label><br>
+    <input type="text" id="municipio" name="municipio" required><br><br>
+
+    <label for="estado">Estado:</label><br>
+    <input type="text" id="estado" name="estadó" required min="1" max="120"><br><br>
+    
+      <label for="pais">Pais:</label><br>
+    <input type="text" id="pais" name="pais" required min="1" max="120"><br><br>
+
+    <label for="notas">Notas:</label><br>
+    <input type="text" id="notas" name="notas" required><br><br>
+    
+    <button type="submit" id="btnEnviar">Enviar</button>
+  </form>
+
+  <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+  <script>
+    function enviado() {
+      document.getElementById('btnEnviar').disabled = true;
+      document.getElementById('estado').textContent = 'Guardando...';
+      
+      setTimeout(function() {
+        document.getElementById('estado').textContent = '¡Registro guardado con éxito!';
+        document.getElementById('formulario').reset();
+        document.getElementById('btnEnviar').disabled = false;
+      }, 1500);
+    }
+  </script>
+
+</body>
+</html>
