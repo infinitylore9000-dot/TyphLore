@@ -1,55 +1,830 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Captura de Datos</title>
-</head>
-<body>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Encuesta Tijuana---Lorenzo Ft. Typh (en espíritu)</title>
 
-  <h2>Captura de Datos</h2>
-
-  <form id="formulario" action="https://script.google.com/macros/s/AKfycbz05LF7O6xy01wa1kqSEkRKm04WzssZQAEqbctuQvuvM5KdVDVChEo1EwwKjKCKL7n4/exec" method="POST" target="hidden_iframe" onsubmit="enviado()">
-    <label for="nombre">Nombre:</label><br>
-    <input type="text" id="nombre" name="nombre" required><br><br>
-
-    <label for="edad">Edad:</label><br>
-    <input type="number" id="edad" name="edad" required min="0" max="9999999999999999999999999999999999"><br><br>
-
-    <label for="institucion">Institucion:</label><br>
-    <input type="text" id="institucion" name="institucion" required><br><br>
-
-    <label for="ciudad">Ciudad:</label><br>
-    <input type="text" id="ciudad" name="ciudad" required min="1" max="120"><br><br>
-    
-    <label for="municipio">Municipio:</label><br>
-    <input type="text" id="municipio" name="municipio" required><br><br>
-
-    <label for="estado">Estado:</label><br>
-    <input type="text" id="estado" name="estadó" required min="1" max="120"><br><br>
-    
-      <label for="pais">Pais:</label><br>
-    <input type="text" id="pais" name="pais" required min="1" max="120"><br><br>
-
-    <label for="notas">Notas:</label><br>
-    <input type="text" id="notas" name="notas" required><br><br>
-    
-    <button type="submit" id="btnEnviar">Enviar</button>
-  </form>
-
-  <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-
-  <script>
-    function enviado() {
-      document.getElementById('btnEnviar').disabled = true;
-      document.getElementById('estado').textContent = 'Guardando...';
-      
-      setTimeout(function() {
-        document.getElementById('estado').textContent = '¡Registro guardado con éxito!';
-        document.getElementById('formulario').reset();
-        document.getElementById('btnEnviar').disabled = false;
-      }, 1500);
+  <style>
+    :root {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #202938;
+      background: #f2f5fa;
     }
-  </script>
 
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px 14px 50px;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.3rem;
+    }
+
+    .subtitulo {
+      color: #5e6879;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid #dce3ed;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 3px 14px rgb(22 38 65 / 5%);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .campo {
+      min-width: 0;
+    }
+
+    .campo.completo {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: .95rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    input, select, textarea {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      border: 1px solid #c5cfdd;
+      border-radius: 8px;
+      padding: 11px 12px;
+      background: white;
+      color: #202938;
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 105px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid #8db5ff;
+      outline-offset: 1px;
+      border-color: #356bd6;
+    }
+
+    .acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .primario {
+      color: white;
+      background: #245ac5;
+    }
+
+    .secundario {
+      background: #e9edf4;
+      color: #26364b;
+    }
+
+    .peligro {
+      background: #ffebeb;
+      color: #a32020;
+    }
+
+    .estado {
+      margin-top: 15px;
+      min-height: 1.5em;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .estado.error {
+      color: #b42318;
+    }
+
+    .estado.ok {
+      color: #187345;
+    }
+
+    .estado.info {
+      color: #465a78;
+    }
+
+    .barra-tabla {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .tabla-contenedor {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid #dce3ed;
+      border-radius: 9px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1100px;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid #e4e9f0;
+      text-align: left;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+      max-width: 280px;
+    }
+
+    th {
+      background: #f4f7fb;
+      font-size: .88rem;
+    }
+
+    td {
+      font-size: .9rem;
+    }
+
+    td .acciones {
+      margin-top: 0;
+      flex-wrap: nowrap;
+    }
+
+    td button {
+      padding: 8px 10px;
+      white-space: nowrap;
+    }
+
+    .contador {
+      color: #5e6879;
+      font-size: .92rem;
+    }
+
+    .nota {
+      color: #687386;
+      font-size: .88rem;
+      line-height: 1.5;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 620px) {
+      body {
+        padding: 14px 9px 30px;
+      }
+
+      .panel {
+        padding: 16px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .campo.completo {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<main>
+  <header>
+    <h1>Encuesta Tijuana---Lorenzo Ft. Typh (en espíritu)</h1>
+    <p class="subtitulo">
+      Formulario de captura y administración de respuestas
+    </p>
+  </header>
+
+  <section class="panel">
+    <h2 id="tituloFormulario">Registrar una respuesta</h2>
+
+    <form id="formulario">
+      <div class="grid">
+
+        <div class="campo">
+          <label for="nombreApellido">1. Nombre y Apellido</label>
+          <input id="nombreApellido" name="nombreApellido"
+                 type="text" maxlength="250" required>
+        </div>
+
+        <div class="campo">
+          <label for="edad">2. Edad</label>
+          <input id="edad" name="edad" type="number"
+                 min="0" max="120" step="1" required>
+        </div>
+
+        <div class="campo">
+          <label for="generoSexo">3. Género (Sexo)</label>
+          <select id="generoSexo" name="generoSexo" required>
+            <option value="">Selecciona una opción</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+            <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="nacionalidad">4. Nacionalidad</label>
+          <input id="nacionalidad" name="nacionalidad"
+                 type="text" maxlength="250" required>
+        </div>
+
+        <div class="campo">
+          <label for="proveniencia">5. Proveniencia</label>
+          <input id="proveniencia" name="proveniencia"
+                 type="text" maxlength="250" required>
+        </div>
+
+        <div class="campo">
+          <label for="denominacionReligiosa">
+            6. Denominación Religiosa
+          </label>
+          <input id="denominacionReligiosa"
+                 name="denominacionReligiosa"
+                 type="text" maxlength="250" required>
+        </div>
+
+        <div class="campo">
+          <label for="partidoPolitico">7. Partido Político</label>
+          <input id="partidoPolitico" name="partidoPolitico"
+                 type="text" maxlength="250" required>
+        </div>
+
+        <div class="campo">
+          <label for="codigoPostal">8. Código Postal</label>
+          <input id="codigoPostal" name="codigoPostal"
+                 type="text" inputmode="numeric"
+                 maxlength="20" required>
+        </div>
+
+        <div class="campo">
+          <label for="delegacion">
+            9. Delegación (Municipal Tijuana)
+          </label>
+          <input id="delegacion" name="delegacion"
+                 type="text" maxlength="250" required>
+        </div>
+
+        <div class="campo completo">
+          <label for="preguntaPlaceholder">
+            10. Pregunta (Placeholder)
+          </label>
+          <textarea id="preguntaPlaceholder"
+                    name="preguntaPlaceholder"
+                    maxlength="5000"
+                    placeholder="Escribe tu respuesta aquí..."
+                    required></textarea>
+        </div>
+      </div>
+
+      <div class="acciones">
+        <button class="primario" id="btnGuardar" type="submit">
+          Guardar respuesta
+        </button>
+
+        <button class="secundario" id="btnCancelar"
+                type="button" hidden>
+          Cancelar edición
+        </button>
+      </div>
+
+      <p id="estadoFormulario" class="estado info" role="status"
+         aria-live="polite">
+        Preparado para registrar respuestas.
+      </p>
+    </form>
+  </section>
+
+  <section class="panel">
+    <div class="barra-tabla">
+      <div>
+        <h2>Respuestas registradas</h2>
+        <span class="contador" id="contador">Cargando...</span>
+      </div>
+
+      <button class="secundario" id="btnActualizar" type="button">
+        Actualizar lista
+      </button>
+    </div>
+
+    <p class="nota">
+      El ID y la fecha/hora son generados por el servidor.
+      La fecha/hora original no cambia al editar una respuesta.
+    </p>
+
+    <p id="estadoTabla" class="estado info" role="status"
+       aria-live="polite">
+      Conectando con Google Sheets...
+    </p>
+
+    <div class="tabla-contenedor">
+      <table>
+        <thead id="encabezadoTabla"></thead>
+        <tbody id="cuerpoTabla"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- El servidor devuelve aquí la confirmación real de cada POST. -->
+<iframe name="respuestaFrame" id="respuestaFrame"
+        title="Respuesta del servidor"
+        hidden></iframe>
+
+<script>
+(() => {
+  "use strict";
+
+  // URL de tu implementación actual de Google Apps Script.
+  const API_URL =
+    "https://script.google.com/macros/s/AKfycbz05LF7O6xy01wa1kqSEkRKm04WzssZQAEqbctuQvuvM5KdVDVChEo1EwwKjKCKL7n4/exec";
+
+  const CAMPOS = [
+    { clave: "nombreApellido", titulo: "Nombre y Apellido" },
+    { clave: "edad", titulo: "Edad" },
+    { clave: "generoSexo", titulo: "Género (Sexo)" },
+    { clave: "nacionalidad", titulo: "Nacionalidad" },
+    { clave: "proveniencia", titulo: "Proveniencia" },
+    {
+      clave: "denominacionReligiosa",
+      titulo: "Denominación Religiosa"
+    },
+    { clave: "partidoPolitico", titulo: "Partido Político" },
+    { clave: "codigoPostal", titulo: "Código Postal" },
+    {
+      clave: "delegacion",
+      titulo: "Delegación (Municipal Tijuana)"
+    },
+    {
+      clave: "preguntaPlaceholder",
+      titulo: "Pregunta (Placeholder)"
+    }
+  ];
+
+  const formulario = document.getElementById("formulario");
+  const estadoFormulario = document.getElementById("estadoFormulario");
+  const estadoTabla = document.getElementById("estadoTabla");
+  const cuerpoTabla = document.getElementById("cuerpoTabla");
+  const encabezadoTabla = document.getElementById("encabezadoTabla");
+  const contador = document.getElementById("contador");
+  const btnGuardar = document.getElementById("btnGuardar");
+  const btnCancelar = document.getElementById("btnCancelar");
+  const btnActualizar = document.getElementById("btnActualizar");
+  const tituloFormulario = document.getElementById("tituloFormulario");
+  const respuestaFrame = document.getElementById("respuestaFrame");
+
+  let registros = [];
+  let idEditando = null;
+  let operacionPendiente = null;
+
+  function mostrarEstado(elemento, mensaje, tipo = "info") {
+    elemento.textContent = mensaje;
+    elemento.className = "estado " + tipo;
+  }
+
+  function crearCelda(fila, texto) {
+    const celda = document.createElement("td");
+    celda.textContent = texto == null ? "" : String(texto);
+    fila.appendChild(celda);
+    return celda;
+  }
+
+  function pedirRegistros() {
+    return new Promise((resolve, reject) => {
+      const callback = "__encuestaCallback";
+      const script = document.createElement("script");
+      let terminado = false;
+
+      const timeout = setTimeout(() => {
+        finalizar(new Error(
+          "Tiempo agotado al consultar el servidor."
+        ));
+      }, 20000);
+
+      function finalizar(error, datos) {
+        if (terminado) return;
+        terminado = true;
+        clearTimeout(timeout);
+        script.remove();
+        try {
+          delete window[callback];
+        } catch (_) {
+          window[callback] = undefined;
+        }
+
+        if (error) reject(error);
+        else resolve(datos);
+      }
+
+      window[callback] = datos => {
+        if (!datos || datos.ok !== true) {
+          finalizar(new Error(
+            datos && datos.mensaje
+              ? datos.mensaje
+              : "No se pudieron consultar los registros."
+          ));
+          return;
+        }
+        finalizar(null, datos);
+      };
+
+      script.onerror = () => {
+        finalizar(new Error(
+          "No se pudo conectar con Google Apps Script. " +
+          "Revisa la URL y la implementación."
+        ));
+      };
+
+      script.src = API_URL +
+        "?callback=" + encodeURIComponent(callback) +
+        "&t=" + Date.now();
+
+      document.head.appendChild(script);
+    });
+  }
+
+  async function actualizarLista() {
+    btnActualizar.disabled = true;
+    mostrarEstado(estadoTabla, "Consultando Google Sheets...", "info");
+
+    try {
+      const datos = await pedirRegistros();
+      registros = datos.registros || [];
+      dibujarTabla();
+
+      mostrarEstado(
+        estadoTabla,
+        "Lista actualizada desde el servidor.",
+        "ok"
+      );
+    } catch (error) {
+      mostrarEstado(
+        estadoTabla,
+        "Error al consultar: " + error.message,
+        "error"
+      );
+    } finally {
+      btnActualizar.disabled = false;
+    }
+  }
+
+  function dibujarTabla() {
+    encabezadoTabla.replaceChildren();
+    cuerpoTabla.replaceChildren();
+
+    const filaCabecera = document.createElement("tr");
+    [
+      "ID",
+      "Fecha y hora",
+      ...CAMPOS.map(c => c.titulo),
+      "Operaciones"
+    ].forEach(titulo => {
+      const th = document.createElement("th");
+      th.scope = "col";
+      th.textContent = titulo;
+      filaCabecera.appendChild(th);
+    });
+
+    encabezadoTabla.appendChild(filaCabecera);
+    contador.textContent =
+      registros.length + (registros.length === 1
+        ? " registro"
+        : " registros");
+
+    if (registros.length === 0) {
+      const fila = document.createElement("tr");
+      const celda = document.createElement("td");
+      celda.colSpan = CAMPOS.length + 3;
+      celda.textContent = "Todavía no hay respuestas registradas.";
+      fila.appendChild(celda);
+      cuerpoTabla.appendChild(fila);
+      return;
+    }
+
+    registros.forEach(registro => {
+      const fila = document.createElement("tr");
+
+      crearCelda(fila, registro.id);
+      crearCelda(fila, formatearFecha(registro.datetime));
+
+      CAMPOS.forEach(campo => {
+        crearCelda(fila, registro[campo.clave]);
+      });
+
+      const celdaAcciones = document.createElement("td");
+      const contenedor = document.createElement("div");
+      contenedor.className = "acciones";
+
+      const btnEditar = document.createElement("button");
+      btnEditar.type = "button";
+      btnEditar.className = "secundario";
+      btnEditar.textContent = "Editar";
+      btnEditar.addEventListener("click", () => comenzarEdicion(registro));
+
+      const btnEliminar = document.createElement("button");
+      btnEliminar.type = "button";
+      btnEliminar.className = "peligro";
+      btnEliminar.textContent = "Eliminar";
+      btnEliminar.addEventListener("click", () => eliminarRegistro(registro));
+
+      contenedor.append(btnEditar, btnEliminar);
+      celdaAcciones.appendChild(contenedor);
+      fila.appendChild(celdaAcciones);
+      cuerpoTabla.appendChild(fila);
+    });
+  }
+
+  function formatearFecha(valor) {
+    if (!valor) return "";
+    const fecha = new Date(valor);
+    if (Number.isNaN(fecha.getTime())) return String(valor);
+    return fecha.toLocaleString("es-MX", {
+      dateStyle: "medium",
+      timeStyle: "short"
+    });
+  }
+
+  function comenzarEdicion(registro) {
+    idEditando = registro.id;
+
+    CAMPOS.forEach(campo => {
+      formulario.elements[campo.clave].value =
+        registro[campo.clave] || "";
+    });
+
+    tituloFormulario.textContent = "Editar respuesta";
+    btnGuardar.textContent = "Guardar cambios";
+    btnCancelar.hidden = false;
+
+    mostrarEstado(
+      estadoFormulario,
+      "Editando el registro " + registro.id,
+      "info"
+    );
+
+    formulario.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  function cancelarEdicion() {
+    idEditando = null;
+    formulario.reset();
+    tituloFormulario.textContent = "Registrar una respuesta";
+    btnGuardar.textContent = "Guardar respuesta";
+    btnCancelar.hidden = true;
+
+    mostrarEstado(
+      estadoFormulario,
+      "Edición cancelada. Puedes registrar una respuesta nueva.",
+      "info"
+    );
+  }
+
+  function enviarOperacion(accion, datos) {
+    if (operacionPendiente) {
+      return Promise.reject(
+        new Error("Ya hay una operación en curso.")
+      );
+    }
+
+    return new Promise((resolve, reject) => {
+      const nonce = (
+        window.crypto && crypto.randomUUID
+          ? crypto.randomUUID()
+          : String(Date.now()) + "-" +
+            Math.random().toString(36).slice(2)
+      );
+
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = API_URL;
+      form.target = "respuestaFrame";
+      form.acceptCharset = "UTF-8";
+      form.hidden = true;
+
+      const parametros = {
+        ...datos,
+        accion,
+        nonce
+      };
+
+      Object.entries(parametros).forEach(([nombre, valor]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = nombre;
+        input.value = String(valor == null ? "" : valor);
+        form.appendChild(input);
+      });
+
+      const timeout = setTimeout(() => {
+        if (!operacionPendiente ||
+            operacionPendiente.nonce !== nonce) return;
+
+        operacionPendiente = null;
+        form.remove();
+        reject(new Error(
+          "No llegó una confirmación del servidor. " +
+          "No se puede confirmar si se guardó el registro. " +
+          "Actualiza la lista antes de volver a enviarlo."
+        ));
+      }, 25000);
+
+      operacionPendiente = {
+        nonce,
+        form,
+        timeout,
+        resolve,
+        reject
+      };
+
+      document.body.appendChild(form);
+
+      try {
+        form.submit();
+      } catch (error) {
+        clearTimeout(timeout);
+        operacionPendiente = null;
+        form.remove();
+        reject(error);
+      }
+    });
+  }
+
+  window.addEventListener("message", event => {
+    // Solo se aceptan mensajes procedentes del iframe de respuesta
+    // y que coincidan con la operación que está pendiente.
+    if (event.source !== respuestaFrame.contentWindow) return;
+
+    const datos = event.data;
+    if (!datos || typeof datos !== "object") return;
+
+    if (!operacionPendiente ||
+        datos.nonce !== operacionPendiente.nonce) return;
+
+    const pendiente = operacionPendiente;
+    operacionPendiente = null;
+    clearTimeout(pendiente.timeout);
+    pendiente.form.remove();
+
+    if (datos.ok === true) {
+      pendiente.resolve(datos);
+    } else {
+      pendiente.reject(new Error(
+        datos.mensaje || "El servidor rechazó la operación."
+      ));
+    }
+  });
+
+  formulario.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!formulario.reportValidity()) return;
+
+    const datos = {};
+    CAMPOS.forEach(campo => {
+      datos[campo.clave] =
+        formulario.elements[campo.clave].value.trim();
+    });
+
+    const accion = idEditando ? "editar" : "guardar";
+    if (idEditando) datos.id = idEditando;
+
+    btnGuardar.disabled = true;
+    btnCancelar.disabled = true;
+
+    mostrarEstado(
+      estadoFormulario,
+      accion === "editar"
+        ? "Enviando cambios al servidor..."
+        : "Enviando respuesta al servidor...",
+      "info"
+    );
+
+    try {
+      const resultado = await enviarOperacion(accion, datos);
+
+      // El éxito solo se anuncia tras la confirmación de Apps Script.
+      mostrarEstado(
+        estadoFormulario,
+        resultado.mensaje,
+        "ok"
+      );
+
+      cancelarEdicion();
+      await actualizarLista();
+
+    } catch (error) {
+      mostrarEstado(
+        estadoFormulario,
+        "No se confirmó la operación: " + error.message,
+        "error"
+      );
+    } finally {
+      btnGuardar.disabled = false;
+      btnCancelar.disabled = false;
+    }
+  });
+
+  async function eliminarRegistro(registro) {
+    const confirmado = window.confirm(
+      "¿Seguro que quieres eliminar el registro de " +
+      (registro.nombreApellido || "esta persona") +
+      "?\nEsta acción no se puede deshacer."
+    );
+
+    if (!confirmado) return;
+
+    mostrarEstado(
+      estadoTabla,
+      "Solicitando eliminación al servidor...",
+      "info"
+    );
+
+    try {
+      const resultado = await enviarOperacion("eliminar", {
+        id: registro.id
+      });
+
+      mostrarEstado(estadoTabla, resultado.mensaje, "ok");
+      await actualizarLista();
+
+      if (idEditando === registro.id) {
+        cancelarEdicion();
+      }
+    } catch (error) {
+      mostrarEstado(
+        estadoTabla,
+        "No se confirmó la eliminación: " + error.message,
+        "error"
+      );
+    }
+  }
+
+  btnCancelar.addEventListener("click", cancelarEdicion);
+  btnActualizar.addEventListener("click", actualizarLista);
+
+  // Primera consulta al cargar la página.
+  actualizarLista();
+})();
+</script>
 </body>
 </html>
