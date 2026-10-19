@@ -708,30 +708,29 @@
     });
   }
 
-  window.addEventListener("message", event => {
-    // Solo se aceptan mensajes procedentes del iframe de respuesta
-    // y que coincidan con la operación que está pendiente.
-    if (event.source !== respuestaFrame.contentWindow) return;
+  
+window.addEventListener("message", event => {
+  const datos = event.data;
 
-    const datos = event.data;
-    if (!datos || typeof datos !== "object") return;
+  if (!datos || typeof datos !== "object") return;
 
-    if (!operacionPendiente ||
-        datos.nonce !== operacionPendiente.nonce) return;
+  if (!operacionPendiente ||
+      datos.nonce !== operacionPendiente.nonce) return;
 
-    const pendiente = operacionPendiente;
-    operacionPendiente = null;
-    clearTimeout(pendiente.timeout);
-    pendiente.form.remove();
+  const pendiente = operacionPendiente;
+  operacionPendiente = null;
+  clearTimeout(pendiente.timeout);
+  pendiente.form.remove();
 
-    if (datos.ok === true) {
-      pendiente.resolve(datos);
-    } else {
-      pendiente.reject(new Error(
-        datos.mensaje || "El servidor rechazó la operación."
-      ));
-    }
-  });
+  if (datos.ok === true) {
+    pendiente.resolve(datos);
+  } else {
+    pendiente.reject(new Error(
+      datos.mensaje || "El servidor rechazó la operación."
+    ));
+  }
+});
+
 
   formulario.addEventListener("submit", async event => {
     event.preventDefault();
